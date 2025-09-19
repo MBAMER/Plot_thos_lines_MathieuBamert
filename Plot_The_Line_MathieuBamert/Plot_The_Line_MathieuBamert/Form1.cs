@@ -15,15 +15,26 @@ public partial class Form1 : Form
         // Add the FormsPlot to the panel
         panel1.Controls.Add(FormsPlot1);
 
-        double[] dataX = { 0, 1, 2, 3, 4, 5 };
-        double[] dataY = { 0, 10, 4, 9, 16, 25 };
+        double[] dataX = { 0, 1, 2, 3, 4, 5, 6,7 };
+        double[] dataY = { 0, 10, 4, 9, 16, 25, 36, 6 };
 
         FormsPlot1.Plot.Add.Scatter(dataX, dataY);
         FormsPlot1.Refresh();
     }
 
-    private void button1_Click(object sender, EventArgs e)
+    private void ImporterFichierCSV(object sender, EventArgs e)
     {
+        OpenFileDialog openFileDialog = new OpenFileDialog
+        {
+            Title = "Sélectionnez un fichier",
+            Filter = "TFichiers texte (*.csv)|*.csv",
+            InitialDirectory = @"C:\"
+        };
 
+        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        {
+            string selectedFile = openFileDialog.FileName;
+            Console.WriteLine("Fichier sélectionné : " + selectedFile);
+        }
     }
 }
