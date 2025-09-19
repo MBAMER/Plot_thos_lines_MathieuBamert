@@ -36,5 +36,18 @@ public partial class Form1 : Form
             string selectedFile = openFileDialog.FileName;
             Console.WriteLine("Fichier sélectionné : " + selectedFile);
         }
+
+        //Liste de Stands
+        /*List<Stand> stands = new List<Stand>();
+
+        //Lecture du CSV et ajout du stand à la liste
+        StreamReader sr = new StreamReader("stands.csv");
+        while (!sr.EndOfStream)
+        {
+            string line = sr.ReadLine();
+            string[] values = line.Split(';');
+            stands.Add(new Stand(int.Parse(values[0]), values[1], values[2], int.Parse(values[3]), values[4], double.Parse(values[5])));
+        }
+        sr.Close();*/
     }
 }
