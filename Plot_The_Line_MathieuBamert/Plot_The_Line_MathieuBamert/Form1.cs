@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace Plot_The_Line_MathieuBamert;
 public partial class Form1 : Form
 {
-    // Create an instance of a FormsPlot like this
+    
     readonly FormsPlot FormsPlot1 = new FormsPlot() { Dock = DockStyle.Fill };
 
     private List<double> colonne3 = new();
@@ -23,7 +23,7 @@ public partial class Form1 : Form
     {
         InitializeComponent();
 
-        // Add the FormsPlot to the panel
+        
         panel1.Controls.Add(FormsPlot1);
 
 
@@ -31,6 +31,8 @@ public partial class Form1 : Form
 
     private void ImporterFichierCSV(object sender, EventArgs e)
     {
+
+        // Ouvrir l'explorateur de fichier pour sélectionner le fichier CSV
         OpenFileDialog openFileDialog = new OpenFileDialog
         {
             Title = "Sélectionnez un fichier",
