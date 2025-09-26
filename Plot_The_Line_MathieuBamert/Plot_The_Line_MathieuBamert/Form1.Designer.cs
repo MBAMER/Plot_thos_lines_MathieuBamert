@@ -35,14 +35,14 @@
             // panel1
             // 
             panel1.BackColor = Color.Cyan;
-            panel1.Location = new Point(72, 119);
+            panel1.Location = new Point(308, 103);
             panel1.Name = "panel1";
             panel1.Size = new Size(740, 413);
             panel1.TabIndex = 0;
             // 
             // button1
             // 
-            button1.Location = new Point(680, 12);
+            button1.Location = new Point(990, 12);
             button1.Name = "button1";
             button1.Size = new Size(187, 43);
             button1.TabIndex = 1;
@@ -54,7 +54,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(879, 544);
+            ClientSize = new Size(1206, 544);
             Controls.Add(button1);
             Controls.Add(panel1);
             Name = "Form1";

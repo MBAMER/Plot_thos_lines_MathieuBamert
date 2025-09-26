@@ -1,5 +1,10 @@
 using ScottPlot.WinForms;
 using System.Windows.Forms;
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
 
 namespace Plot_The_Line_MathieuBamert;
@@ -15,11 +20,7 @@ public partial class Form1 : Form
         // Add the FormsPlot to the panel
         panel1.Controls.Add(FormsPlot1);
 
-        double[] dataX = { 0, 1, 2, 3, 4, 5, 6,7 };
-        double[] dataY = { 0, 10, 4, 9, 16, 25, 36, 6 };
-
-        FormsPlot1.Plot.Add.Scatter(dataX, dataY);
-        FormsPlot1.Refresh();
+       
     }
 
     private void ImporterFichierCSV(object sender, EventArgs e)
@@ -34,20 +35,47 @@ public partial class Form1 : Form
         if (openFileDialog.ShowDialog() == DialogResult.OK)
         {
             string selectedFile = openFileDialog.FileName;
-            Console.WriteLine("Fichier sélectionné : " + selectedFile);
-        }
 
-        //Liste de Stands
-        /*List<Stand> stands = new List<Stand>();
+            // Lire toutes les lignes du CSV
+            var lignes = File.ReadAllLines(selectedFile);
 
-        //Lecture du CSV et ajout du stand à la liste
-        StreamReader sr = new StreamReader("stands.csv");
-        while (!sr.EndOfStream)
-        {
-            string line = sr.ReadLine();
-            string[] values = line.Split(';');
-            stands.Add(new Stand(int.Parse(values[0]), values[1], values[2], int.Parse(values[3]), values[4], double.Parse(values[5])));
+            // Listes pour stocker les colonnes 3, 4 et 5
+            List<double> colonne3 = new List<double>();
+            List<double> colonne4 = new List<double>();
+            List<double> colonne5 = new List<double>();
+
+            foreach (string ligne in lignes.Skip(1)) // Skip(1) pour ignorer la ligne d’entête
+            {
+                string[] valeurs = ligne.Split(';'); // ajuste le séparateur si nécessaire
+
+                if (valeurs.Length >= 5) // On vérifie qu’il y a au moins 5 colonnes
+                {
+                    if (double.TryParse(valeurs[2], out double valCol3) &&
+                        double.TryParse(valeurs[3], out double valCol4) &&
+                        double.TryParse(valeurs[4], out double valCol5))
+                    {
+                        colonne3.Add(valCol3);
+                        colonne4.Add(valCol4);
+                        colonne5.Add(valCol5);
+                    }
+                }
+            }
+
+            // Axe X = indices des lignes
+            double[] dataX = Enumerable.Range(0, colonne3.Count).Select(i => (double)i).ToArray();
+
+            // Récupérer les Y
+            double[] dataY0 = colonne3.ToArray(); // courbe colonne 3
+            double[] dataY1 = colonne4.ToArray(); // courbe colonne 4
+            double[] dataY2 = colonne5.ToArray(); // courbe colonne 5
+
+            // Affichage
+            FormsPlot1.Plot.Clear();
+            FormsPlot1.Plot.Add.Scatter(dataX, dataY0);
+            FormsPlot1.Plot.Add.Scatter(dataX, dataY1);
+            FormsPlot1.Plot.Add.Scatter(dataX, dataY2);
+        
+            FormsPlot1.Refresh();
         }
-        sr.Close();*/
     }
 }
