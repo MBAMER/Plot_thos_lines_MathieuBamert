@@ -4,85 +4,125 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using System.Windows.Forms;
+using System.Drawing;
 
-
-namespace Plot_The_Line_MathieuBamert;
-public partial class Form1 : Form
+namespace Plot_The_Line_MathieuBamert
 {
-    
-    readonly FormsPlot FormsPlot1 = new FormsPlot() { Dock = DockStyle.Fill };
-
-    private List<double> colonne3 = new();
-    private List<double> colonne4 = new();
-    private List<double> colonne5 = new();
-    private List<DateTime> dates = new();
-    private string acronyme = ""; // Ajoutez ce champ à la classe
-
-    public Form1()
+    public partial class Form1 : Form
     {
-        InitializeComponent();
+        readonly FormsPlot FormsPlot1 = new FormsPlot() { Dock = DockStyle.Fill };
 
-        
-        panel1.Controls.Add(FormsPlot1);
-
-
-    }
-
-    private void ImporterFichierCSV(object sender, EventArgs e)
-    {
-
-        // Ouvrir l'explorateur de fichier pour sélectionner le fichier CSV
-        OpenFileDialog openFileDialog = new OpenFileDialog
+        // Classe pour stocker un fichier importé
+        private class JeuDeDonnees
         {
-            Title = "Sélectionnez un fichier",
-            Filter = "TFichiers texte (*.csv)|*.csv",
-            InitialDirectory = @"C:\"
+            public string Acronyme { get; set; } = "";
+            public List<DateTime> Dates { get; set; } = new();
+            public List<double> Moyenne { get; set; } = new();
+            public List<double> Maximum { get; set; } = new();
+            public List<double> Minimum { get; set; } = new();
+            public Color CouleurMoyenne { get; set; }
+            public Color CouleurMaximum { get; set; }
+            public Color CouleurMinimum { get; set; }
+        }
+
+        private List<JeuDeDonnees> tousLesJeux = new();
+
+        // Palette de couleurs cyclique
+        private Color[][] paletteCouleurs = new Color[][]
+        {
+            new[] { Color.Blue, Color.Green, Color.Red },
+            new[] { Color.Purple, Color.Orange, Color.Cyan },
+            new[] { Color.Magenta, Color.Brown, Color.Lime },
+            new[] { Color.DarkBlue, Color.DarkGreen, Color.DarkRed }
         };
 
-        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        public Form1()
         {
+            InitializeComponent();
+            panel1.Controls.Add(FormsPlot1);
+        }
+
+        private void ImporterFichierCSV(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Title = "Sélectionnez un fichier",
+                Filter = "Fichiers texte (*.csv)|*.csv",
+                InitialDirectory = @"C:\"
+            };
+
+            if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+
             try
             {
                 string selectedFile = openFileDialog.FileName;
-                var lignes = File.ReadAllLines(selectedFile);
 
-                dates.Clear();
-                colonne3.Clear();
-                colonne4.Clear();
-                colonne5.Clear();
+                // Lecture CSV 
+                var lignes = File.ReadAllLines(selectedFile)
+                    .Skip(1)
+                    .Select(l => l.Split(';'))
+                    .Where(v => v.Length >= 5)
+                    .ToList();
 
-                foreach (string ligne in lignes.Skip(1))
-                {
-                    string[] valeurs = ligne.Split(';');
-                    if (valeurs.Length >= 5)
-                    {
-                        if (DateTime.TryParse(valeurs[1], out DateTime date))
-                            dates.Add(date);
+                var dates = lignes
+                    .Select(v => DateTime.TryParse(v[1], out var d) ? d : (DateTime?)null)
+                    .Where(d => d.HasValue)
+                    .Select(d => d.Value)
+                    .ToList();
 
-                        if (double.TryParse(valeurs[2], out double valCol3) &&
-                            double.TryParse(valeurs[3], out double valCol4) &&
-                            double.TryParse(valeurs[4], out double valCol5))
-                        {
-                            colonne3.Add(valCol3);
-                            colonne4.Add(valCol4);
-                            colonne5.Add(valCol5);
-                        }
-                    }
-                }
+                var colMoy = lignes
+                    .Select(v => double.TryParse(v[2], out var d) ? d : double.NaN)
+                    .Where(d => !double.IsNaN(d))
+                    .ToList();
 
-                if (dates.Count == 0 || colonne3.Count == 0)
+                var colMax = lignes
+                    .Select(v => double.TryParse(v[3], out var d) ? d : double.NaN)
+                    .Where(d => !double.IsNaN(d))
+                    .ToList();
+
+                var colMin = lignes
+                    .Select(v => double.TryParse(v[4], out var d) ? d : double.NaN)
+                    .Where(d => !double.IsNaN(d))
+                    .ToList();
+
+                if (!dates.Any() || !colMoy.Any())
                     throw new Exception("Aucune donnée valide trouvée dans le fichier.");
 
-                // Extraire l'acronyme (caractères 9 à 11 du nom du fichier sans extension)
                 string nomFichier = Path.GetFileNameWithoutExtension(selectedFile);
-                acronyme = nomFichier.Length >= 11 ? nomFichier.Substring(8, 3) : "";
+                string acronyme = nomFichier.Length >= 11 ? nomFichier.Substring(8, 3) : "";
 
-                // Remplir la CheckedListBox avec le nom + acronyme
-                checkedListBoxTemp.Items.Clear();
-                checkedListBoxTemp.Items.Add($"Température moyenne ({acronyme})", true);
-                checkedListBoxTemp.Items.Add($"Température maximum ({acronyme})", true);
-                checkedListBoxTemp.Items.Add($"Température minimum ({acronyme})", true);
+                // Choix des couleurs pour ce fichier
+                var couleurs = paletteCouleurs[tousLesJeux.Count % paletteCouleurs.Length];
+
+                var jeu = new JeuDeDonnees
+                {
+                    Acronyme = acronyme,
+                    Dates = dates,
+                    Moyenne = colMoy,
+                    Maximum = colMax,
+                    Minimum = colMin,
+                    CouleurMoyenne = couleurs[0],
+                    CouleurMaximum = couleurs[1],
+                    CouleurMinimum = couleurs[2]
+                };
+
+                tousLesJeux.Add(jeu);
+
+                // Ajout dynamique dans CheckedListBox via LINQ lambda
+                new[] { "moyenne", "maximum", "minimum" }
+                    .ToList()
+                    .ForEach(type =>
+                    {
+                        string nomItem = $"Température {type} ({acronyme})";
+                        checkedListBoxTemp.Items.Add(nomItem, true);
+                    });
+
+                MessageBox.Show(
+                    $"Le fichier '{Path.GetFileName(selectedFile)}' a été importé avec succès !",
+                    "Importation réussie",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
 
                 AfficherCourbesSelectionnees();
             }
@@ -97,34 +137,42 @@ public partial class Form1 : Form
             }
         }
 
+        
+        private void AfficherCourbesSelectionnees(Dictionary<string, bool>? etatsCases = null)
+        {
+            FormsPlot1.Plot.Clear();
 
-    }
+            tousLesJeux.ForEach(jeu =>
+            {
+                double[] dataX = jeu.Dates.Select(d => d.ToOADate()).ToArray();
 
-    private void CheckedListBoxTemp_ItemCheck(object? sender, ItemCheckEventArgs e)
-    {
-        // Attendre la fin de l’événement pour que l’état soit mis à jour
-        BeginInvoke((Action)AfficherCourbesSelectionnees);
-    }
+                new[]
+                {
+                    new { Nom = $"Température moyenne ({jeu.Acronyme})", Donnees = jeu.Moyenne, Couleur = jeu.CouleurMoyenne },
+                    new { Nom = $"Température maximum ({jeu.Acronyme})", Donnees = jeu.Maximum, Couleur = jeu.CouleurMaximum },
+                    new { Nom = $"Température minimum ({jeu.Acronyme})", Donnees = jeu.Minimum, Couleur = jeu.CouleurMinimum }
+                }
+                .ToList()
+                .ForEach(c =>
+                {
+                    bool estCoche = etatsCases != null
+                         ?etatsCases.GetValueOrDefault(c.Nom, false)
+                        : checkedListBoxTemp.GetItemChecked(checkedListBoxTemp.Items.IndexOf(c.Nom));
 
-    private void AfficherCourbesSelectionnees()
-    {
-        double[] dataX = dates.Select(d => d.ToOADate()).ToArray();
+                    if (estCoche)
+                    {
+                        FormsPlot1.Plot.Add.Scatter(
+                            dataX,
+                            c.Donnees.ToArray(),
+                            color: ScottPlot.Color.FromColor(c.Couleur)
+                        );
+                    }
+                });
+            });
 
-        FormsPlot1.Plot.Clear();
-
-        if (checkedListBoxTemp.CheckedItems.Contains($"Température moyenne ({acronyme})"))
-            FormsPlot1.Plot.Add.Scatter(dataX, colonne3.ToArray());
-        if (checkedListBoxTemp.CheckedItems.Contains($"Température minimum ({acronyme})"))
-            FormsPlot1.Plot.Add.Scatter(dataX, colonne4.ToArray());
-        if (checkedListBoxTemp.CheckedItems.Contains($"Température maximum ({acronyme})"))
-            FormsPlot1.Plot.Add.Scatter(dataX, colonne5.ToArray());
-
-        FormsPlot1.Plot.Axes.DateTimeTicksBottom();
-        FormsPlot1.Refresh();
-    }
-
-    private void label1_Click(object sender, EventArgs e)
-    {
-
+            FormsPlot1.Plot.Axes.DateTimeTicksBottom();
+            FormsPlot1.Plot.Legend.IsVisible = true;
+            FormsPlot1.Refresh();
+        }
     }
 }

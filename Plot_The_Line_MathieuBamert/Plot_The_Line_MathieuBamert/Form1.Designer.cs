@@ -60,7 +60,6 @@
             checkedListBoxTemp.Name = "checkedListBoxTemp";
             checkedListBoxTemp.Size = new Size(290, 400);
             checkedListBoxTemp.TabIndex = 2;
-            checkedListBoxTemp.ItemCheck += CheckedListBoxTemp_ItemCheck;
             // 
             // label1
             // 
