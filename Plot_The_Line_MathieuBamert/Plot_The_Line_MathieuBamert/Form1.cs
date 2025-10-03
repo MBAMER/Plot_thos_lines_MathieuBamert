@@ -165,9 +165,11 @@ namespace Plot_The_Line_MathieuBamert
                             dataX,
                             c.Donnees.ToArray(),
                             color: ScottPlot.Color.FromColor(c.Couleur)
-                        );
+                        ).Label = c.Nom;
                     }
                 });
+
+                
             });
 
             FormsPlot1.Plot.Axes.DateTimeTicksBottom();
