@@ -13,3 +13,9 @@
   - Le rapport ne contient pas la planification initiale demandée précédemment.
   - La description du domaine d'application est insuffisante (3 lignes)
   - Il est temps d'augmenter la vitesse de travail
+
+## 9.10
+
+- Le journal de travail manque de détails. Un bloc de 2h30, ça ne va pas.
+- Le rapport est très en retard. La planification initiale demandée et re-demandée n'y figure toujours pas
+- Il y a des choses qui marchent, mais le code semble assez en retard
