@@ -1,4 +1,4 @@
-using ScottPlot.WinForms;
+ï»¿using ScottPlot.WinForms;
 using System.Windows.Forms;
 using System;
 using System.IO;
@@ -12,7 +12,7 @@ namespace Plot_The_Line_MathieuBamert
     {
         readonly FormsPlot FormsPlot1 = new FormsPlot() { Dock = DockStyle.Fill };
 
-        // Classe pour stocker un fichier importé
+        // Classe pour stocker un fichier importÃ©
         private class JeuDeDonnees
         {
             public string Acronyme { get; set; } = "";
@@ -40,13 +40,16 @@ namespace Plot_The_Line_MathieuBamert
         {
             InitializeComponent();
             panel1.Controls.Add(FormsPlot1);
+
+            // ðŸ”¹ Quand une case est (dÃ©)cochÃ©e â†’ on met Ã  jour le graphique
+            checkedListBoxTemp.ItemCheck += CheckedListBoxTemp_ItemCheck;
         }
 
         private void ImporterFichierCSV(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Title = "Sélectionnez un fichier",
+                Title = "SÃ©lectionnez un fichier",
                 Filter = "Fichiers texte (*.csv)|*.csv",
                 InitialDirectory = @"C:\"
             };
@@ -86,7 +89,7 @@ namespace Plot_The_Line_MathieuBamert
                     .ToList();
 
                 if (!dates.Any() || !colMoy.Any())
-                    throw new Exception("Aucune donnée valide trouvée dans le fichier.");
+                    throw new Exception("Aucune donnÃ©e valide trouvÃ©e dans le fichier.");
 
                 string nomFichier = Path.GetFileNameWithoutExtension(selectedFile);
                 string acronyme = nomFichier.Length >= 11 ? nomFichier.Substring(8, 3) : "";
@@ -108,18 +111,14 @@ namespace Plot_The_Line_MathieuBamert
 
                 tousLesJeux.Add(jeu);
 
-                // Ajout dynamique dans CheckedListBox via LINQ lambda
+                // ðŸ”¹ Ajout des 3 types de courbes en LINQ
                 new[] { "moyenne", "maximum", "minimum" }
                     .ToList()
-                    .ForEach(type =>
-                    {
-                        string nomItem = $"Température {type} ({acronyme})";
-                        checkedListBoxTemp.Items.Add(nomItem, true);
-                    });
+                    .ForEach(type => checkedListBoxTemp.Items.Add($"TempÃ©rature {type} ({acronyme})", true));
 
                 MessageBox.Show(
-                    $"Le fichier '{Path.GetFileName(selectedFile)}' a été importé avec succès !",
-                    "Importation réussie",
+                    $"Le fichier '{Path.GetFileName(selectedFile)}' a Ã©tÃ© importÃ© avec succÃ¨s !",
+                    "Importation rÃ©ussie",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
                 );
@@ -129,7 +128,7 @@ namespace Plot_The_Line_MathieuBamert
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Erreur lors de l’importation du fichier :\n{ex.Message}",
+                    $"Erreur lors de lâ€™importation du fichier :\n{ex.Message}",
                     "Erreur",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
@@ -137,7 +136,7 @@ namespace Plot_The_Line_MathieuBamert
             }
         }
 
-        
+        // ðŸ”¹ RafraÃ®chit le graphique selon les cases cochÃ©es (version LINQ)
         private void AfficherCourbesSelectionnees(Dictionary<string, bool>? etatsCases = null)
         {
             FormsPlot1.Plot.Clear();
@@ -148,33 +147,42 @@ namespace Plot_The_Line_MathieuBamert
 
                 new[]
                 {
-                    new { Nom = $"Température moyenne ({jeu.Acronyme})", Donnees = jeu.Moyenne, Couleur = jeu.CouleurMoyenne },
-                    new { Nom = $"Température maximum ({jeu.Acronyme})", Donnees = jeu.Maximum, Couleur = jeu.CouleurMaximum },
-                    new { Nom = $"Température minimum ({jeu.Acronyme})", Donnees = jeu.Minimum, Couleur = jeu.CouleurMinimum }
+                    new { Nom = $"TempÃ©rature moyenne ({jeu.Acronyme})", Donnees = jeu.Moyenne, Couleur = jeu.CouleurMoyenne },
+                    new { Nom = $"TempÃ©rature maximum ({jeu.Acronyme})", Donnees = jeu.Maximum, Couleur = jeu.CouleurMaximum },
+                    new { Nom = $"TempÃ©rature minimum ({jeu.Acronyme})", Donnees = jeu.Minimum, Couleur = jeu.CouleurMinimum }
                 }
+                .Where(c =>
+                    (etatsCases != null && etatsCases.ContainsKey(c.Nom) && etatsCases[c.Nom]) ||
+                    (etatsCases == null && checkedListBoxTemp.GetItemChecked(checkedListBoxTemp.Items.IndexOf(c.Nom)))
+                )
                 .ToList()
                 .ForEach(c =>
-                {
-                    bool estCoche = etatsCases != null
-                         ?etatsCases.GetValueOrDefault(c.Nom, false)
-                        : checkedListBoxTemp.GetItemChecked(checkedListBoxTemp.Items.IndexOf(c.Nom));
-
-                    if (estCoche)
-                    {
-                        FormsPlot1.Plot.Add.Scatter(
-                            dataX,
-                            c.Donnees.ToArray(),
-                            color: ScottPlot.Color.FromColor(c.Couleur)
-                        ).Label = c.Nom;
-                    }
-                });
-
-                
+                    FormsPlot1.Plot.Add.Scatter(
+                        dataX,
+                        c.Donnees.ToArray(),
+                        color: ScottPlot.Color.FromColor(c.Couleur)
+                    ).Label = c.Nom
+                );
             });
 
             FormsPlot1.Plot.Axes.DateTimeTicksBottom();
             FormsPlot1.Plot.Legend.IsVisible = true;
             FormsPlot1.Refresh();
+        }
+
+        // Mise Ã  jour dynamique du graphique avec LINQ
+        private void CheckedListBoxTemp_ItemCheck(object? sender, ItemCheckEventArgs e)
+        {
+            var etatsCases = checkedListBoxTemp.Items
+                .Cast<object>()
+                .Select((item, i) => new
+                {
+                    Nom = item.ToString() ?? "",
+                    EstCoche = i == e.Index ? e.NewValue == CheckState.Checked : checkedListBoxTemp.GetItemChecked(i)
+                })
+                .ToDictionary(x => x.Nom, x => x.EstCoche);
+
+            AfficherCourbesSelectionnees(etatsCases);
         }
     }
 }
