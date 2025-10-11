@@ -22,11 +22,23 @@
 
 ## 10.10 (80%)
 
-- Rythme (avancement du code):
-- Qualité (normes, commentaires):
-- Connaissances professionnelles (LinQ):
-- Processus de travail (jdt, git, git project, release):
+- Rythme (avancement du code): KO
+  - il n'y a aucune persistance de vos données
+- Qualité (normes, commentaires): KO
+  - votre nom ne doit pas apparaître dans le code. Exemple : le namespace `Plot_The_Line_MathieuBamert`
+  - veuillez respecter la bonne pratique qui consiste à mettre une classe dans un fichier
+  - utilisez des Identificateurs qui donnent du sens. Et pas les identificateurs par défaut, tels `button1`
+- Connaissances professionnelles (LinQ): OK
+- Processus de travail (jdt, git, git project, release): KO
+  - Le nommage des commits n'est pas encore acquis. Je rappelle : le nom que l'on donne au comit est composé de trois parties
+    1. Le type d'activité.
+    2. Ce sur quoi le commit a eu un impact
+    3. Ce que fait le commit.
+    Donc, votre commit `Feat(Ajouter nom) Rajout des noms des axes` devrait en fait être nommé `Feat(Axes) Rajout des noms`
+  - votre journal de travail est bien imprimé, mais vous pourriez en améliorer la présentation en supprimant les lignes blanches vides inutiles.
 - Expression (user stories, rapport):
-- Ecologie (.gitignore):
-- Attitude groupe:
-- Attitude personnelle:
+  - US OK
+  - il reste beaucoup à faire dans le rapport
+- Ecologie (.gitignore): OK
+- Attitude groupe: OK
+- Attitude personnelle: OK
