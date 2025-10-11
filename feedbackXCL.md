@@ -19,3 +19,14 @@
 - Le journal de travail manque de détails. Un bloc de 2h30, ça ne va pas.
 - Le rapport est très en retard. La planification initiale demandée et re-demandée n'y figure toujours pas
 - Il y a des choses qui marchent, mais le code semble assez en retard
+
+## 10.10 (80%)
+
+- Rythme (avancement du code):
+- Qualité (normes, commentaires):
+- Connaissances professionnelles (LinQ):
+- Processus de travail (jdt, git, git project, release):
+- Expression (user stories, rapport):
+- Ecologie (.gitignore):
+- Attitude groupe:
+- Attitude personnelle:
