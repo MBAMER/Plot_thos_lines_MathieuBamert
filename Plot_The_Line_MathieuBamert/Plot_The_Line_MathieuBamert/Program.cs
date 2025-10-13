@@ -1,4 +1,4 @@
-namespace Plot_The_Line_MathieuBamert
+namespace Plot_The_Line
 {
     internal static class Program
     {

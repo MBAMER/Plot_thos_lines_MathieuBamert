@@ -6,7 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace Plot_The_Line_MathieuBamert
+namespace Plot_The_Line
 {
     public partial class Form1 : Form
     {

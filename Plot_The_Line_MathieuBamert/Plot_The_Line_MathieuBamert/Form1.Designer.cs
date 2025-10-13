@@ -1,4 +1,4 @@
-﻿namespace Plot_The_Line_MathieuBamert
+﻿namespace Plot_The_Line
 {
     partial class Form1
     {
@@ -42,6 +42,7 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(740, 413);
             panel1.TabIndex = 0;
+            
             // 
             // button1
             // 
