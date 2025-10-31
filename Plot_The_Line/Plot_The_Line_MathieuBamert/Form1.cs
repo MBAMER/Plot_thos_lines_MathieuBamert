@@ -6,6 +6,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Drawing;
 using PlotTheLine;
+using System.Text.Json;
+using System.Diagnostics;
 
 namespace Plot_The_Line
 {
@@ -29,7 +31,11 @@ namespace Plot_The_Line
             InitializeComponent();
             panel1.Controls.Add(FormsPlot1);
 
-            // 🔹 Quand une case est (dé)cochée → on met à jour le graphique
+            //Restauration
+            tousLesJeux = JsonSerializer.Deserialize<List<JeuDeDonnees>>(File.ReadAllText("données-sauvegardée.json"));
+            Trace.WriteLine("###: " + tousLesJeux.Count);
+
+            // Quand une case est (dé)cochée → on met à jour le graphique
             checkedListBoxTemp.ItemCheck += CheckedListBoxTemp_ItemCheck;
         }
 
@@ -98,6 +104,9 @@ namespace Plot_The_Line
                 };
 
                 tousLesJeux.Add(jeu);
+
+                //Sauvegarde
+                File.WriteAllText("données-sauvegardée.json", JsonSerializer.Serialize<List<JeuDeDonnees>>(tousLesJeux));
 
                 // 🔹 Ajout des 3 types de courbes en LINQ
                 new[] { "moyenne", "maximum", "minimum" }
