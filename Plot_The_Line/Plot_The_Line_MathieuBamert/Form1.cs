@@ -31,10 +31,10 @@ namespace Plot_The_Line
             InitializeComponent();
             panel1.Controls.Add(FormsPlot1);
 
-            //Restauration
+            /*Restauration
             tousLesJeux = JsonSerializer.Deserialize<List<JeuDeDonnees>>(File.ReadAllText("données-sauvegardée.json"));
-            Trace.WriteLine("###: " + tousLesJeux.Count);
-
+            Trace.WriteLine("###: " + tousLesJeux.Count);*/
+            
             // Quand une case est (dé)cochée → on met à jour le graphique
             checkedListBoxTemp.ItemCheck += CheckedListBoxTemp_ItemCheck;
         }
