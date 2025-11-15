@@ -42,3 +42,17 @@
 - Ecologie (.gitignore): OK
 - Attitude groupe: OK
 - Attitude personnelle: OK
+
+## Final
+
+Le nommage des commits est OK
+
+Dans le rapport, la planification initiale ne va pas du tout. C'est quelque chose que j'avais demandé de faire au début du projet (c'est pour cela qu'on utilise le mot "initiale"), mais que vous n'aviez pas faite. Résultat : vous vous êtes complètement trompé en essayant de la refaire à la fin du projet. La phrase "voici les grandes étapes que j'ai suivies" le démontre.
+
+Le schéma que vous avez fourni ne suit pas le formalisme demandé (schéma d'architecture), mais, accompagné des explications que vous avez fournies en dessous, il fournit de vraies informations utiles. Je l'accepte donc.
+
+Il reste donc encore bien quelques défauts à votre projet. Mais je vais plutôt valoriser deux points encourageants :
+1. La bonne qualité de vos user Stories.
+2. La correction dans le nommage des commits
+
+Je valide donc votre projet.
